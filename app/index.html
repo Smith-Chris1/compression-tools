@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Compression Tools</title>
+    <script src="js/script.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/mac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="./css/index.css" media="screen" />
+    <link href="https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed" rel="stylesheet">
+    <link href="../node_modules/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- <link rel="stylesheet" href="../node_modules/font-awesome/"> -->
+    <script>
+        $(document).ready(function () {
+
+            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+
+                localStorage.setItem('activeTab', $(e.target).attr('href'));
+
+            });
+
+            var activeTab = localStorage.getItem('activeTab');
+
+            if (activeTab) {
+
+                $('#tab-menu a[href="' + activeTab + '"]').tab('show');
+
+            }
+
+        });
+    </script>
+</head>
+
+<body class="bg-dark">
+    <div class="design">
+        <div class="titlebar">
+            <div class="drag"></div>
+            <div class="mac_header">
+                <div class="mac_action">
+                    <span class="mac_close" id="btn_close"></span>
+                    <span class="mac_minimize" id="btn_min"></span>
+                    <span class="mac_maximize" id="btn_max"></span>
+                </div>
+                <div class="container h-100">
+                    <div class="row h-100 justify-content-center align-items-center">Compression Tools</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="main" class="container">
+
+
+        <div class="">
+            <div class="">
+                <div class="modal fade" role="dialog" id="results" style="display: none;">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content bg-dark">
+                            <div class="modal-header">
+                                <h5 class="modal-title text-white" id="popup-title"></h5>
+                            </div>
+                            <div class="modal-body">
+                                <p id="popup-body" class="text-white"></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" data-dismiss="modal"
+                                    onclick="document.location.reload()">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ul class="nav nav-tabs bg-dark" id="tab-menu">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#concat">Stitch Mp4s</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#mux">Mux</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#transvideo">Transcode</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#lufs">Audio Level</a>
+                    </li> -->
+                    <li class="nav-item" style="display: none;">
+                        <a class="nav-link" data-toggle="tab" href="#dstream">Download</a>
+                    </li>
+
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade active show container" id="concat">
+                        <form method="post">
+                            <div class="">
+                                <div class="row section-box mt-2">
+
+                                    <label id="cat-vid-1" class="col-sm-8 text-left description-text demo-droppable ">
+                                        <span id="catVid1File">Drag video file 1 here <br>Or click to select.</span>
+                                        <input type="file" id="catVid1Input" name="catVid1Input" style="display:none">
+                                    </label>
+                                    <label id="cat-vid-2" class="col-sm-4 text-left description-text demo-droppable ">
+                                        <span id="catVid2File">Drag video file 2 here<br>Or click to select.</span>
+                                        <input type="file" id="catVid2Input" name="catVid2Input" style="display:none">
+                                    </label>
+
+                                </div>
+
+                                <div class="row section-box" style="height:30px">
+                                    <!-- <label for="audio-file" class="col-4 col-form-label">Audio File</label> -->
+                                    <label id="cat-aud-1"
+                                        class="col-sm-12 text-center description-text demo-droppable ">
+                                        <span id="catAud1File">Choose Audio File</span>
+                                        <input type="file" id="catAud1Input" name="catAud1Input" style="display:none">
+                                    </label>
+                                </div>
+                                <div class="row"></div>
+                                <div class="row section-box" style="height:30px">
+
+                                    <label class="col-sm-12 text-center description-text demo-droppable ">
+                                        <span id="catOut" style="text-overflow: ellipsis;
+                                        max-width: 58ch;
+                                        white-space: nowrap;
+                                        overflow: hidden;
+                                        display: -webkit-box;">Output Location</span>
+                                        <input type="file" id="catOutInput" name="catOutInput" style="display:none"
+                                            webkitdirectory>
+
+                                    </label>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <div class="row mr-1 ">
+                                            <div class="col" style='padding-left:0; padding-right: 0;'>
+                                                <div class="h6 " id='cat-status'>Not Started</div>
+                                            </div>
+                                            <div class="col" style='padding-left:0; padding-right: 0;'>
+                                                <div class="h6 text-right" id='cat-sub'></div>
+                                            </div>
+                                        </div>
+                                        <div class="row mr-1 progress">
+                                            <div id="cat-progress" class="progress-bar bg-success" role="progressbar"
+                                                style="width: 0%" aria-valuenow="25" aria-valuemin="0"
+                                                aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <button name="submitCatForm" type="button" class="text-right btn btn-success"
+                                            id="submitCat">Start</button>
+                                    </div>
+                                    <button id="killCatButton" name="killCatButton" type="button" class="btn btn-danger"
+                                        id="killTransButton" style="display: none;">Stop!</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="tab-pane fade container" id="mux">
+                        <form method="post">
+                            <div class="">
+                                <div class="row section-box mt-2">
+
+                                    <label id="mux-vid-1" class="col-sm-8 text-left description-text demo-droppable ">
+                                        <span id="muxVid1File">Drag videos file(s) here<br>Or click to select.</span>
+                                        <input type="file" id="muxVid1Input" name="catVid1Input" style="display:none" multiple>
+                                    </label>
+                                    <label id="mux-aud-1" class="col-sm-4 text-left description-text demo-droppable ">
+                                        <span id="muxAud1File">Drag single audio file here<br>Or click to select.</span>
+                                        <input type="file" id="muxAud1Input" name="muxAud1Input" style="display:none"
+                                            multiple>
+                                    </label>
+                                </div>
+
+
+                                <div class="row"></div>
+                                <div class="row" style="display: none;">
+                                    <h6>Wrap or Extract:</h6>
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input id="extractMux" class="form-check-input" type="checkbox" value=""
+                                                    checked="">
+                                                Deselect this to re-wrap, keep selected it to extract audio.
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row section-box" style="height:30px">
+
+                                    <label class="col-sm-12 text-center description-text demo-droppable ">
+                                        <span id="muxOut" style="text-overflow: ellipsis;
+                                        max-width: 58ch;
+                                        white-space: nowrap;
+                                        overflow: hidden;
+                                        display: -webkit-box;">Output Location</span>
+                                        <input type="file" id="muxOutInput" name="muxOutInput" style="display:none"
+                                            webkitdirectory>
+
+                                    </label>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <div class="row mr-1 ">
+                                            <div class="col" style='padding-left:0; padding-right: 0;'>
+                                                <div class="h6 " id='mux-status'>Not Started</div>
+                                            </div>
+                                            <div class="col" style='padding-left:0; padding-right: 0;'>
+                                                <div class="h6 text-right" id='mux-sub'></div>
+                                            </div>
+                                        </div>
+                                        <div class="row mr-1 progress">
+                                            <div id="mux-progress" class="progress-bar bg-success" role="progressbar"
+                                                style="width: 0%" aria-valuenow="25" aria-valuemin="0"
+                                                aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <button name="submitMuxForm" type="button" class="text-right btn btn-success"
+                                            id="submitMux">Start</button>
+                                    </div>
+                                    <button id="killMuxButton" name="killMuxButton" type="button" class="btn btn-danger"
+                                        id="killTransButton" style="display: none;">Stop!</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade container" id="transvideo">
+                        <form method="post">
+                            <div class="">
+                                <div class="row section-box mt-2">
+                                    <div id="transFile1Div"></div>
+                                    <label id="trans-vid-1" class="col-sm-8 text-left description-text demo-droppable ">
+
+                                        <span id="transVid1File">Drag video file(s) here<br>Or click to select.<br><br>If
+                                            no
+                                            video, leave blank.</span>
+                                        <input type="file" id="transVid1Input" name="transVid1Input"
+                                            style="display:none" multiple>
+
+                                    </label>
+                                    <label id="trans-aud-1" class="col-sm-4 text-left description-text demo-droppable ">
+                                        <span id="transAud1File">Drag single audio file here<br>or click to select.<br><br>If
+                                            no
+                                            audio, leave blank.</span>
+                                        <input type="file" id="transAud1Input" name="transAud1Input"
+                                            style="display:none">
+                                    </label>
+                                </div>
+
+                                <!-- <div class="row"> -->
+                                    <!-- <h6>Video Quality:</h6> -->
+                                    <!-- <div class="col">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input id="2pass" class="form-check-input" type="checkbox" value="">
+                                                2-Pass (This will increase transcode times)
+                                            </label>
+                                        </div>
+                                    </div> -->
+                                <!-- </div> -->
+                                <div class="row">
+                                    <!-- <fieldset class="form-group"> -->
+                                    <!-- <div class="row"> -->
+                                    <h6>Video Selection:</h6>
+
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input id="1080p" class="form-check-input" type="checkbox" value=""
+                                                    >
+                                                1080p mp4
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input id="720p" class="form-check-input" type="checkbox" value=""
+                                                    checked="">
+                                                720p mp4
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input id="360p" class="form-check-input" type="checkbox" value=""
+                                                    checked="">
+                                                360p mp4
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <!-- </div> -->
+                                    <!-- </fieldset> -->
+                                </div>
+                                <div class="row">
+                                    <h6>Audio Selection:</h6>
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input id="320k" class="form-check-input" type="checkbox" value="">
+                                                320k aac
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input id="128k" class="form-check-input" type="checkbox" value="">
+                                                128k aac
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check">
+                                            <label class="form-check-label">
+                                                <input id="32k" class="form-check-input" type="checkbox" value="">
+                                                32k mp3
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <!-- </div> -->
+                                    <!-- </fieldset> -->
+                                </div>
+                                <div class="row section-box" style="height:30px">
+
+                                    <label class="col-sm-12 text-center description-text demo-droppable ">
+                                        <span id="transOut" style="text-overflow: ellipsis;
+                                        max-width: 58ch;
+                                        white-space: nowrap;
+                                        overflow: hidden;
+                                        display: -webkit-box;">Output Location</span>
+                                        <input type="file" id="transOutInput" name="transOutInput" style="display:none"
+                                            webkitdirectory>
+
+                                    </label>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <div class="row mr-1 ">
+                                            <div class="col" style='padding-left:0; padding-right: 0;'>
+                                                <div class="h6 " id='trans-status'>Not Started</div>
+                                            </div>
+                                            <div class="col" style='padding-left:0; padding-right: 0;'>
+                                                <div class="h6 text-right" id='trans-sub'></div>
+                                            </div>
+                                        </div>
+                                        <div class="row mr-1 progress">
+                                            <div id="trans-progress" class="progress-bar bg-success" role="progressbar"
+                                                style="width: 0%" aria-valuenow="25" aria-valuemin="0"
+                                                aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-right">
+                                        <button name="submitTransForm" type="button" class="text-right btn btn-success"
+                                            id="submitTrans">Start</button>
+                                    </div>
+                                    <button name="killTransButton" type="button" class="btn btn-danger"
+                                        id="killTransButton" style="display: none;">Stop!</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade container" id="dstream">
+                        <form method="post">
+                            <div class="">
+                                <div class="row section-box align-middle mt-2">
+                                    <!-- <label for="audio-file" class="col-4 col-form-label">Audio File</label> -->
+                                    <label id="cat-aud-1"
+                                        class="col-sm-12 text-center description-text demo-droppable ">
+                                        <div class="row">
+                                            <label class="pl-1 pr-1 text-left mt-1 mb-0 col-4">
+                                                <span for="dstreamURLInput" id="dstreamURL">
+                                                    m3u8 or Youtube URL here.</span>
+                                            </label>
+                                            <!-- <div class="col-8"> -->
+                                            <input class="mt-1 col-7 form-control input-sm " type="text"
+                                                id="dstreamURLInput" name="dstreamURLInput"
+                                                style="height: calc(.5em + .5rem + 2px);">
+                                            <!-- </div> -->
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="row"></div>
+                                <div class="row section-box" style="height:30px">
+
+                                    <label class="col-sm-12 text-center description-text demo-droppable ">
+                                        <span id="dstreamURLOut" style="text-overflow: ellipsis;
+                                        max-width: 58ch;
+                                        white-space: nowrap;
+                                        overflow: hidden;
+                                        display: -webkit-box;">Output Location</span>
+                                        <input type="file" id="dstreamURLOutInput" name="dstreamURLOutInput"
+                                            style="display:none" webkitdirectory>
+                                    </label>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <div class="row mr-1 ">
+                                            <div class="col" style='padding-left:0; padding-right: 0;'>
+                                                <div class="h6 " id='dstreamURL-status'>Not Started</div>
+                                            </div>
+                                            <div class="col" style='padding-left:0; padding-right: 0;'>
+                                                <div class="h6 text-right" id='dstreamURL-sub'></div>
+                                            </div>
+                                        </div>
+                                        <div class="row mr-1 progress">
+                                            <div id="dstreamURL-progress" class="progress-bar bg-success"
+                                                role="progressbar" style="width: 0%" aria-valuenow="25"
+                                                aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <button name="submitdstreamURLForm" type="button"
+                                            class="text-right btn btn-success" id="submitdstreamURL">Start</button>
+                                    </div>
+                                    <button id="killdstreamURLButton" name="killdstreamURLButton" type="button"
+                                        class="btn btn-danger" id="killTransButton"
+                                        style="display: none;">Stop!</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade container" id="lufs">
+                        <form method="post">
+                            <div class="">
+                                <div class="row section-box mt-2">
+
+                                    <label id="lufs-vid-1" class="col-sm-12 text-left description-text demo-droppable ">
+                                        <span id="lufsFile">Drag file here <br>Or click to select.</span>
+                                        <input type="file" id="lufsInput" name="lufsInput" style="display:none">
+                                    </label>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <div class="row mr-1 ">
+                                            <div class="col" style='padding-left:0; padding-right: 0;'>
+                                                <div class="h6 " id='lufs-status'>Not Started</div>
+                                            </div>
+                                            <div class="col" style='padding-left:0; padding-right: 0;'>
+                                                <div class="h6 text-right" id='lufs-sub'></div>
+                                            </div>
+                                        </div>
+                                        <div class="row mr-1 progress">
+                                            <div id="lufs-progress" class="progress-bar bg-success" role="progressbar"
+                                                style="width: 0%" aria-valuenow="25" aria-valuemin="0"
+                                                aria-valuemax="100"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <button name="submitlufsForm" type="button" class="text-right btn btn-success"
+                                            id="submitlufs">Start</button>
+                                    </div>
+                                    <button id="killlufsButton" name="killlufsButton" type="button"
+                                        class="btn btn-danger" style="display: none;">Stop!</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/renderer.js">
+    </script>
+
+
+</body>
+
+</html>
